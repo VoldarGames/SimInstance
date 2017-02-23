@@ -3,9 +3,9 @@ using System.Reflection;
 
 namespace SimInstance
 {
-    public static class SimRangeRule<T>
+    public class SimRangeRuleApplier<T> : SimRuleApplier<T>
     {
-        public static void ApplySimRangeRule(PropertyInfo property, ref T newEntity)
+        public override void ApplyRule(PropertyInfo property, ref T newEntity)
         {
             var rangeAttribute = property.GetCustomAttribute(typeof(SimRangeAttribute));
             var minRangeValue = rangeAttribute.GetType().GetProperty("MinRange").GetValue(rangeAttribute);
@@ -13,7 +13,7 @@ namespace SimInstance
             property.SetValue(newEntity, GetRandomRange(minRangeValue, maxRangeValue));
         }
 
-        public static int GetRandomRange(object min, object max)
+        private static int GetRandomRange(object min, object max)
         {
             var rand = new Random((int)DateTime.Now.Ticks);
             return rand.Next((int)min, (int)max);

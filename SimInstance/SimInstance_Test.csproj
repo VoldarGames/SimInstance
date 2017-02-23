@@ -50,11 +50,16 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="ISimAttribute.cs" />
+    <Compile Include="DecoratedOneIntClass.cs" />
+    <Compile Include="OneIntClass.cs" />
     <Compile Include="SimAttribute.cs" />
     <Compile Include="SimAttributesHandler.cs" />
     <Compile Include="SimInstanceManager.cs" />
     <Compile Include="SimRangeAttribute.cs" />
-    <Compile Include="SimRangeRule.cs" />
+    <Compile Include="SimRangeRuleApplier.cs" />
+    <Compile Include="SimRule.cs" />
+    <Compile Include="SimRuleApplier.cs" />
     <Compile Include="Test.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
