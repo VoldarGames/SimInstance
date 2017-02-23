@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
@@ -39,12 +38,11 @@ namespace SimInstance
             var now = DateTime.Now;
 
             SimInstanceManager manager = new SimInstanceManager();
-            var simRules = new List<SimRule>()
-            {
-                new SimRule(nameof(OneIntClass.MyInt),typeof(int),new SimRangeAttribute(0,100))
-            };
+
+            var oneIntClassSimRulesProfile = new OneIntClassSimRulesProfile();
+            
             Debug.WriteLine($"Total elapsed time creating {numberOfInstances} instances: {(DateTime.Now-now).ToString("G")}");
-            var target = manager.GenerateInstancesWithRules<OneIntClass>(numberOfInstances, simRules);
+            var target = manager.GenerateInstancesWithRules<OneIntClass>(numberOfInstances, oneIntClassSimRulesProfile.SimRules);
 
 
             Assert.IsNotNull(target);

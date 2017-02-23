@@ -50,9 +50,11 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="AbstractSimRulesProfile.cs" />
     <Compile Include="ISimAttribute.cs" />
     <Compile Include="DecoratedOneIntClass.cs" />
     <Compile Include="OneIntClass.cs" />
+    <Compile Include="OneIntClassSimRulesProfile.cs" />
     <Compile Include="SimAttribute.cs" />
     <Compile Include="SimAttributesHandler.cs" />
     <Compile Include="SimInstanceManager.cs" />

@@ -15,7 +15,7 @@ namespace SimInstance
         /// <typeparam name="T"></typeparam>
         /// <param name="simRules"></param>
         /// <returns></returns>
-        public T CreteInstanceWithRules<T>(List<SimRule> simRules)
+        public T CreteInstanceWithRules<T>(List<SimRule<T>> simRules)
         {
             var type = typeof(T);
 
@@ -112,7 +112,7 @@ namespace SimInstance
         /// <param name="count">The number of instances that you want to build randomly according to SimRules.</param>
         /// <param name="simRules">The SimRules affecting this new instance.</param>
         /// <returns></returns>
-        public List<T> GenerateInstancesWithRules<T>(int count, List<SimRule> simRules)
+        public List<T> GenerateInstancesWithRules<T>(int count, List<SimRule<T>> simRules)
         {
             var result = new List<T>();
 
