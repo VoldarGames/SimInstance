@@ -8,7 +8,8 @@ namespace SimInstance
     {
         public static Dictionary<Type,Action<PropertyInfo, T>> ActionDictionary { get; set; } = new Dictionary<Type, Action<PropertyInfo,T>>()
         {
-            { typeof(SimRangeAttribute), (property, newEntity) => new SimRangeRuleApplier<T>().ApplyRule(property,ref newEntity)}
+            { typeof(SimRangeAttribute), (property, newEntity) => new SimRangeRuleApplier<T>().ApplyRule(property,ref newEntity)},
+            {typeof(SimRegexAttribute),(property, newEntity) => new SimRegexRuleApplier<T>().ApplyRule(property,ref newEntity)}
         };
 
        

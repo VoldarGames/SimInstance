@@ -24,49 +24,56 @@ namespace SimInstance
             var moduleBuilder = assemblyBuilder.DefineDynamicModule(assemblyName.Name);
             var typeBuilder = moduleBuilder.DefineType($"SimClass_{type.Name}", System.Reflection.TypeAttributes.Public,typeof(T));
 
+            
             foreach (var propertyInfo in type.GetRuntimeProperties().Where(info => info.DeclaringType != null && info.DeclaringType.IsPublic))
             {
                 var propertyBuilder = typeBuilder.DefineProperty(propertyInfo.Name, PropertyAttributes.HasDefault, CallingConventions.Any, propertyInfo.PropertyType,null);
                 foreach (var simRule in simRules)
                 {
-                    var attributeCtorParams = simRule.SimAttribute.GetParameterTypes();
-                    var attributeCtorInfo = simRule.SimAttribute.GetType().GetConstructor(attributeCtorParams);
-                    var attributeBuilder = new CustomAttributeBuilder(attributeCtorInfo, simRule.SimAttribute.GetParameterValues());
-                    propertyBuilder.SetCustomAttribute(attributeBuilder);
+                    if (propertyInfo.Name == simRule.PropertyName)
+                    {
+                        var attributeCtorParams = simRule.SimAttribute.GetParameterTypes();
+                        var attributeCtorInfo = simRule.SimAttribute.GetType().GetConstructor(attributeCtorParams);
+                        var attributeBuilder = new CustomAttributeBuilder(attributeCtorInfo,
+                            simRule.SimAttribute.GetParameterValues());
+                        propertyBuilder.SetCustomAttribute(attributeBuilder);
 
-                    FieldBuilder fieldBuilder = typeBuilder.DefineField($"_{propertyInfo.Name}",
-                                                        typeof(string),
-                                                        FieldAttributes.Private);
 
-                    const MethodAttributes getSetAttributes = MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.HideBySig;
-                    // Define the "get" accessor method for CustomerName.
-                    MethodBuilder methodBuilderGet =
-                        typeBuilder.DefineMethod($"get_{propertyInfo.Name}",
-                                                   getSetAttributes,
-                                                   propertyInfo.PropertyType,
-                                                   Type.EmptyTypes);
-                    ILGenerator getIL = methodBuilderGet.GetILGenerator();
-                    getIL.Emit(OpCodes.Ldarg_0);
-                    getIL.Emit(OpCodes.Ldfld, fieldBuilder);
-                    getIL.Emit(OpCodes.Ret);
-                    // Define the "set" accessor method for CustomerName.
-                    MethodBuilder methodBuilderSet =
-                        typeBuilder.DefineMethod($"set_{propertyInfo.Name}",
-                                                   getSetAttributes,
-                                                   null,
-                                                   new Type[] { propertyInfo.PropertyType });
+                        FieldBuilder fieldBuilder = typeBuilder.DefineField($"_{propertyInfo.Name}",
+                            typeof(string),
+                            FieldAttributes.Private);
 
-                    ILGenerator setIL = methodBuilderSet.GetILGenerator();
-                    setIL.Emit(OpCodes.Ldarg_0);
-                    setIL.Emit(OpCodes.Ldarg_1);
-                    setIL.Emit(OpCodes.Stfld, fieldBuilder);
-                    setIL.Emit(OpCodes.Ret);
+                        const MethodAttributes getSetAttributes =
+                            MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.HideBySig;
+                        // Define the "get" accessor method for CustomerName.
+                        MethodBuilder methodBuilderGet =
+                            typeBuilder.DefineMethod($"get_{propertyInfo.Name}",
+                                getSetAttributes,
+                                propertyInfo.PropertyType,
+                                Type.EmptyTypes);
+                        ILGenerator getIL = methodBuilderGet.GetILGenerator();
+                        getIL.Emit(OpCodes.Ldarg_0);
+                        getIL.Emit(OpCodes.Ldfld, fieldBuilder);
+                        getIL.Emit(OpCodes.Ret);
+                        // Define the "set" accessor method for CustomerName.
+                        MethodBuilder methodBuilderSet =
+                            typeBuilder.DefineMethod($"set_{propertyInfo.Name}",
+                                getSetAttributes,
+                                null,
+                                new Type[] {propertyInfo.PropertyType});
 
-                    // Last, we must map the two methods created above to our PropertyBuilder to 
-                    // their corresponding behaviors, "get" and "set" respectively. 
+                        ILGenerator setIL = methodBuilderSet.GetILGenerator();
+                        setIL.Emit(OpCodes.Ldarg_0);
+                        setIL.Emit(OpCodes.Ldarg_1);
+                        setIL.Emit(OpCodes.Stfld, fieldBuilder);
+                        setIL.Emit(OpCodes.Ret);
 
-                    propertyBuilder.SetGetMethod(methodBuilderGet);
-                    propertyBuilder.SetSetMethod(methodBuilderSet);
+                        // Last, we must map the two methods created above to our PropertyBuilder to 
+                        // their corresponding behaviors, "get" and "set" respectively. 
+
+                        propertyBuilder.SetGetMethod(methodBuilderGet);
+                        propertyBuilder.SetSetMethod(methodBuilderSet);
+                    }
                 }
             }
 
@@ -120,10 +127,9 @@ namespace SimInstance
             {
                 var newEntity = CreteInstanceWithRules<T>(simRules);
                 var runtimeProperties = newEntity.GetType().GetRuntimeProperties();
-                var properties = newEntity.GetType().GetProperties();
                 foreach (var property in runtimeProperties)
                 {
-                    if (property.PropertyType.IsPrimitive)
+                    if (property.PropertyType.IsPrimitive || property.PropertyType == typeof(string))
                     {
                         ApplySimAttributes<T>(ref newEntity, property);
                     }
@@ -133,11 +139,24 @@ namespace SimInstance
                     }
                     
                 }
+                MapToOriginalEntity(ref newEntity);
                 result.Add(newEntity);
 
 
             }
             return result;
+        }
+
+        private void MapToOriginalEntity<T>(ref T newEntity)
+        {
+            var newEntityType = newEntity.GetType();
+            var newEntityPropertiesLab = newEntityType.GetRuntimeProperties().Where(info => info.Module.ScopeName == "SimInstanceLab").ToList();
+            var newEntityProperties = newEntityType.GetRuntimeProperties().Except(newEntityPropertiesLab).ToList();
+            for (var i = 0; i < newEntityProperties.Count; i++)
+            {
+                newEntityProperties[i].SetValue(newEntity,newEntityPropertiesLab[i].GetValue(newEntity));
+            }
+
         }
 
         /// <summary>

@@ -12,9 +12,14 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace SimInstance
 {
+
+ 
     [TestClass]
     public class Test
     {
+
+        
+
         [TestMethod]
         public void GenerationGoodCountAndValuesTest()
         {
@@ -51,9 +56,32 @@ namespace SimInstance
 
             Assert.IsNotNull(target);
             Assert.AreEqual(target.Count, numberOfInstances);
+
             foreach (var targetInstance in target)
             {
                 Assert.IsTrue(targetInstance.MyInt >= 0 && targetInstance.MyInt <= 100);
+            }
+        }
+
+        [TestMethod]
+        public void GenerationWith2RulesSimplePersonTest()
+        {
+            const int numberOfInstances = 300;
+            var now = DateTime.Now;
+
+            SimInstanceManager manager = new SimInstanceManager();
+
+            var simpleClassSimRulesProfile = new SimpleClassSimRulesProfile();
+
+            Debug.WriteLine($"Total elapsed time creating {numberOfInstances} instances: {(DateTime.Now - now).ToString("G")}");
+            var target = manager.GenerateInstancesWithRules<SimplePersonClass>(numberOfInstances, simpleClassSimRulesProfile.SimRules);
+
+
+            Assert.IsNotNull(target);
+            Assert.AreEqual(target.Count, numberOfInstances);
+            foreach (var targetInstance in target)
+            {
+                Assert.IsTrue(targetInstance.Age >= 0 && targetInstance.Age <= 100);
             }
         }
 

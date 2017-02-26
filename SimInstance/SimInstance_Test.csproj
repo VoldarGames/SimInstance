@@ -62,8 +62,12 @@
     <Compile Include="SimAttribute.cs" />
     <Compile Include="SimAttributesHandler.cs" />
     <Compile Include="SimInstanceManager.cs" />
+    <Compile Include="SimpleClassSimRulesProfile.cs" />
+    <Compile Include="SimplePersonClass.cs" />
     <Compile Include="SimRangeAttribute.cs" />
     <Compile Include="SimRangeRuleApplier.cs" />
+    <Compile Include="SimRegexAttribute.cs" />
+    <Compile Include="SimRegexRuleApplier.cs" />
     <Compile Include="SimRule.cs" />
     <Compile Include="SimRuleApplier.cs" />
     <Compile Include="Test.cs" />
