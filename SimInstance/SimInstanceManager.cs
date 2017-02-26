@@ -15,7 +15,7 @@ namespace SimInstance
         /// <typeparam name="T"></typeparam>
         /// <param name="simRules"></param>
         /// <returns></returns>
-        public T CreteInstanceWithRules<T>(List<SimRule<T>> simRules)
+        public T CreateInstanceWithRules<T>(List<SimRule<T>> simRules)
         {
             var type = typeof(T);
 
@@ -81,6 +81,8 @@ namespace SimInstance
             var instance = Activator.CreateInstance(newType);
             return (T)instance;
         }
+
+        
         /// <summary>
         /// Generates 'count' number of instances that have decorator SimAttributes in their public properties
         /// </summary>
@@ -94,18 +96,7 @@ namespace SimInstance
             for (var i = 0; i < count; i++)
             {
                 var newEntity = new T();
-                foreach (var property in newEntity.GetType().GetRuntimeProperties())
-                {
-                    if (property.PropertyType.IsPrimitive)
-                    {
-                        ApplySimAttributes<T>(ref newEntity,property);
-                    }
-                    else
-                    {
-                        //Complex? //Other?
-                    }
-                    
-                }
+                HandleNewEntitySimAttributes(ref newEntity);
                 result.Add(newEntity);
             }
             return result;
@@ -125,26 +116,43 @@ namespace SimInstance
 
             for (var i = 0; i < count; i++)
             {
-                var newEntity = CreteInstanceWithRules<T>(simRules);
-                var runtimeProperties = newEntity.GetType().GetRuntimeProperties();
-                foreach (var property in runtimeProperties)
+                var newEntity = CreateInstanceWithRules<T>(simRules);
+                HandleNewEntitySimAttributes(ref newEntity,simRules);
+                MapToOriginalEntity(ref newEntity);
+                result.Add(newEntity);
+            }
+            return result;
+        }
+
+        private void HandleNewEntitySimAttributes<T>(ref T newEntity, List<SimRule<T>> simRules = null)
+        {
+            var runtimeProperties = newEntity.GetType().GetRuntimeProperties();
+            foreach (var property in runtimeProperties)
+            {
+                if (property.PropertyType.IsPrimitive || property.PropertyType == typeof(string))
                 {
-                    if (property.PropertyType.IsPrimitive || property.PropertyType == typeof(string))
+                    ApplySimAttributes<T>(ref newEntity, property);
+                }
+                else //Complex Type
+                {
+                    if (simRules == null)
                     {
-                        ApplySimAttributes<T>(ref newEntity, property);
+                        var newChildEntity = Activator.CreateInstance(property.PropertyType);
+                        HandleNewEntitySimAttributes(ref newChildEntity);
+                        property.SetValue(newEntity,newChildEntity);
                     }
                     else
                     {
-                        //Complex? //Other?
+                        //TODO: Create new Type
+                        //Create new Type
+                        //Activator.CreateInstance of new Type with SimAttributes
+                        //HandleNewEntitySimAttributes(ref newChildEntity);
+                        //property.SetValue(newEntity, newChildEntity);
                     }
-                    
                 }
-                MapToOriginalEntity(ref newEntity);
-                result.Add(newEntity);
-
 
             }
-            return result;
+           
         }
 
         private void MapToOriginalEntity<T>(ref T newEntity)

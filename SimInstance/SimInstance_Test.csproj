@@ -55,6 +55,10 @@
   </Choose>
   <ItemGroup>
     <Compile Include="AbstractSimRulesProfile.cs" />
+    <Compile Include="ComplexIntsClass.cs" />
+    <Compile Include="ComplexIntsClassSimRulesProfile.cs" />
+    <Compile Include="DecoratedComplexIntsClass.cs" />
+    <Compile Include="DecoratedSimplePersonClass.cs" />
     <Compile Include="ISimAttribute.cs" />
     <Compile Include="DecoratedOneIntClass.cs" />
     <Compile Include="OneIntClass.cs" />

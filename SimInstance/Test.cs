@@ -64,9 +64,33 @@ namespace SimInstance
         }
 
         [TestMethod]
+        public void GenerationDecoratedSimplePersonTest()
+        {
+            const int numberOfInstances = 3000;
+            var now = DateTime.Now;
+
+            SimInstanceManager manager = new SimInstanceManager();
+
+            Debug.WriteLine($"Total elapsed time creating {numberOfInstances} instances: {(DateTime.Now - now).ToString("G")}");
+            var target = manager.GenerateInstances<DecoratedSimplePersonClass>(numberOfInstances);
+
+
+            Assert.IsNotNull(target);
+            Assert.AreEqual(target.Count, numberOfInstances);
+            foreach (var targetInstance in target)
+            {
+                Assert.IsTrue(targetInstance.Age >= 0 && targetInstance.Age <= 100);
+                Assert.IsNotNull(targetInstance.Name);
+                Assert.IsNotNull(targetInstance.SurName);
+                Assert.IsNotNull(targetInstance.Street);
+                Assert.IsTrue(targetInstance.Street.EndsWith("Street"));
+            }
+        }
+
+        [TestMethod]
         public void GenerationWith2RulesSimplePersonTest()
         {
-            const int numberOfInstances = 300;
+            const int numberOfInstances = 3000;
             var now = DateTime.Now;
 
             SimInstanceManager manager = new SimInstanceManager();
@@ -82,10 +106,56 @@ namespace SimInstance
             foreach (var targetInstance in target)
             {
                 Assert.IsTrue(targetInstance.Age >= 0 && targetInstance.Age <= 100);
+                Assert.IsNotNull(targetInstance.Name);
+                Assert.IsNotNull(targetInstance.SurName);
+                Assert.IsNotNull(targetInstance.Street);
+                Assert.IsTrue(targetInstance.Street.EndsWith("Street"));
             }
         }
 
         [TestMethod]
+        public void GenerationComplexDecoratedClassTest()
+        {
+            const int numberOfInstances = 300;
+            var now = DateTime.Now;
+
+            SimInstanceManager manager = new SimInstanceManager();
+            var target = manager.GenerateInstances<DecoratedComplexIntsClass>(numberOfInstances);
+
+            Debug.WriteLine($"Total elapsed time creating {numberOfInstances} instances: {(DateTime.Now - now).ToString("G")}");
+            Assert.IsNotNull(target);
+            Assert.AreEqual(target.Count, numberOfInstances);
+            foreach (var targetInstance in target)
+            {
+                Assert.IsTrue(targetInstance.MyInt >= 20 && targetInstance.MyInt <= 30);
+                Assert.IsTrue(targetInstance.MyIntClass.MyInt >= 0 && targetInstance.MyIntClass.MyInt <= 100);
+            }
+            
+        }
+        [TestMethod]
+        public void GenerationComplexWithRulesClassTest()
+        {
+            const int numberOfInstances = 300;
+            var now = DateTime.Now;
+
+            SimInstanceManager manager = new SimInstanceManager();
+            var complexIntsClassSimRulesProfile = new ComplexIntsClassSimRulesProfile();
+            var target = manager.GenerateInstancesWithRules<ComplexIntsClass>(numberOfInstances, complexIntsClassSimRulesProfile.SimRules);
+
+            
+            Debug.WriteLine($"Total elapsed time creating {numberOfInstances} instances: {(DateTime.Now - now).ToString("G")}");
+            Assert.IsNotNull(target);
+            Assert.AreEqual(target.Count, numberOfInstances);
+            foreach (var targetInstance in target)
+            {
+                Assert.IsTrue(targetInstance.MyInt >= 20 && targetInstance.MyInt <= 30);
+                Assert.IsTrue(targetInstance.MyIntClass.MyInt >= 0 && targetInstance.MyIntClass.MyInt <= 100);
+            }
+
+        }
+        
+
+       [TestMethod]
         public void CanAddAttribute()
         {
             var type = typeof(DecoratedOneIntClass);
