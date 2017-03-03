@@ -4,9 +4,9 @@ using SimInstanceLab.SimRules.AbstractProfile;
 
 namespace SimInstance.Profiles
 {
-    public class SimpleClassSimRulesProfile : AbstractSimRulesProfile<SimplePersonClass>
+    public class SimplePersonClassSimRulesProfile : AbstractSimRulesProfile<SimplePersonClass>
     {
-        public SimpleClassSimRulesProfile()
+        public SimplePersonClassSimRulesProfile()
         {
             RuleFor(c => c.Age, new SimRangeAttribute(0, 100))
                 .RuleFor(c => c.Name, new SimRegexAttribute("[A-Z][a-z]{5}") )

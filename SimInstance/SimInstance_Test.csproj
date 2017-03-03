@@ -56,7 +56,7 @@
   <ItemGroup>
     <Compile Include="Profiles\ComplexIntsClassSimRulesProfile.cs" />
     <Compile Include="Profiles\OneIntClassSimRulesProfile.cs" />
-    <Compile Include="Profiles\SimpleClassSimRulesProfile.cs" />
+    <Compile Include="Profiles\SimplePersonClassSimRulesProfile.cs" />
     <Compile Include="Test.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestClasses\Undecorated\Complex\ComplexIntsClass.cs" />

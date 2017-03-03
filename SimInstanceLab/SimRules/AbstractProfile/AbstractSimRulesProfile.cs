@@ -5,9 +5,10 @@ using SimInstanceLab.SimAttributes.BaseClass;
 
 namespace SimInstanceLab.SimRules.AbstractProfile
 {
-    public abstract class AbstractSimRulesProfile<T> where T : new()
+    public abstract class AbstractSimRulesProfile<T> : IAbstractSimRulesProfile where T : new()
     {
-        public List<SimRule<T>> SimRules = new List<SimRule<T>>();
+        public List<ISimRule> SimRules { get; set; } = new List<ISimRule>();
+
         public AbstractSimRulesProfile<T> RuleFor(Expression<Func<T, object>> func, SimAttribute simAttribute)
         {
             MemberExpression operand;
@@ -26,5 +27,6 @@ namespace SimInstanceLab.SimRules.AbstractProfile
             SimRules.Add(new SimRule<T>(operand.Member.Name, func.ReturnType, simAttribute));
             return this;
         }
+
     }
 }

@@ -11,7 +11,7 @@ using SimInstance.TestClasses.Decorated.Complex;
 using SimInstance.TestClasses.Decorated.Simple;
 using SimInstance.TestClasses.Undecorated.Complex;
 using SimInstance.TestClasses.Undecorated.Simple;
-using SimInstanceLab.Manager;
+using SimInstanceLab.Managers;
 using SimInstanceLab.SimAttributes;
 
 namespace SimInstance
@@ -21,13 +21,11 @@ namespace SimInstance
     [TestClass]
     public class Test
     {
-
-        
-
         [TestMethod]
-        public void GenerationGoodCountAndValuesTest()
+        [TestCategory("Decorated Class")]
+        public void DecoratedSimpleClassSimRangeTest()
         {
-            const int numberOfInstances = 300;
+            const int numberOfInstances = 3000;
             var now = DateTime.Now;
 
             SimInstanceManager manager = new SimInstanceManager();
@@ -45,17 +43,19 @@ namespace SimInstance
         }
 
         [TestMethod]
-        public void GenerationWithRulesGoodCountAndValuesTest()
+        [TestCategory("UnDecorated Class - Lab")]
+
+        public void UnDecoratedSimpleClassSimRangeWithRules_CreatedInLabTest()
         {
-            const int numberOfInstances = 300;
+            const int numberOfInstances = 3000;
             var now = DateTime.Now;
 
             SimInstanceManager manager = new SimInstanceManager();
 
-            var oneIntClassSimRulesProfile = new OneIntClassSimRulesProfile();
+            SimRulesProfileManager.AddProfile<OneIntClass>(new OneIntClassSimRulesProfile());
             
             Debug.WriteLine($"Total elapsed time creating {numberOfInstances} instances: {(DateTime.Now-now).ToString("G")}");
-            var target = manager.GenerateInstancesWithRules<OneIntClass>(numberOfInstances, oneIntClassSimRulesProfile.SimRules);
+            var target = manager.GenerateInstancesWithRulesInLab<OneIntClass>(numberOfInstances);
 
 
             Assert.IsNotNull(target);
@@ -68,7 +68,9 @@ namespace SimInstance
         }
 
         [TestMethod]
-        public void GenerationDecoratedSimplePersonTest()
+        [TestCategory("Decorated Class")]
+
+        public void DecoratedSimplePersonClassSimRegexTest()
         {
             const int numberOfInstances = 3000;
             var now = DateTime.Now;
@@ -92,17 +94,19 @@ namespace SimInstance
         }
 
         [TestMethod]
-        public void GenerationWith2RulesSimplePersonTest()
+        [TestCategory("UnDecorated Class - Lab")]
+
+        public void UnDecoratedSimplePersonClassSimRegexWithRules_CreatedInLabTest()
         {
             const int numberOfInstances = 3000;
             var now = DateTime.Now;
 
             SimInstanceManager manager = new SimInstanceManager();
 
-            var simpleClassSimRulesProfile = new SimpleClassSimRulesProfile();
+            SimRulesProfileManager.AddProfile<SimplePersonClass>(new SimplePersonClassSimRulesProfile());
 
             Debug.WriteLine($"Total elapsed time creating {numberOfInstances} instances: {(DateTime.Now - now).ToString("G")}");
-            var target = manager.GenerateInstancesWithRules<SimplePersonClass>(numberOfInstances, simpleClassSimRulesProfile.SimRules);
+            var target = manager.GenerateInstancesWithRulesInLab<SimplePersonClass>(numberOfInstances);
 
 
             Assert.IsNotNull(target);
@@ -118,9 +122,10 @@ namespace SimInstance
         }
 
         [TestMethod]
-        public void GenerationComplexDecoratedClassTest()
+        [TestCategory("Decorated Class")]
+        public void DecoratedComplexClassSimRangeTest()
         {
-            const int numberOfInstances = 300;
+            const int numberOfInstances = 3000;
             var now = DateTime.Now;
 
             SimInstanceManager manager = new SimInstanceManager();
@@ -136,16 +141,21 @@ namespace SimInstance
             }
             
         }
+
         [TestMethod]
-        public void GenerationComplexWithRulesClassTest()
+        [TestCategory("UnDecorated Class - Lab")]
+        public void UnDecoratedComplexClassSimRangeWithRules_CreatedInLabTest()
         {
-            const int numberOfInstances = 300;
+            const int numberOfInstances = 3000;
             var now = DateTime.Now;
 
             SimInstanceManager manager = new SimInstanceManager();
-            var complexIntsClassSimRulesProfile = new ComplexIntsClassSimRulesProfile();
+
+            SimRulesProfileManager.AddProfile<ComplexIntsClass>(new ComplexIntsClassSimRulesProfile());
+            SimRulesProfileManager.AddProfile<OneIntClass>(new OneIntClassSimRulesProfile());
+
             
-            var target = manager.GenerateInstancesWithRules<ComplexIntsClass>(numberOfInstances,complexIntsClassSimRulesProfile.SimRules);
+            var target = manager.GenerateInstancesWithRulesInLab<ComplexIntsClass>(numberOfInstances);
 
             
             Debug.WriteLine($"Total elapsed time creating {numberOfInstances} instances: {(DateTime.Now - now).ToString("G")}");
@@ -158,9 +168,36 @@ namespace SimInstance
             }
 
         }
-        
 
-       [TestMethod]
+        [TestMethod]
+        [TestCategory("UnDecorated Class - SimRulesProfileManager")]
+
+        public void UnDecoratedSimpleClassSimRangeWithRules_CreatedInSimRulesProfileManager()
+        {
+            const int numberOfInstances = 3000;
+            var now = DateTime.Now;
+
+            SimInstanceManager manager = new SimInstanceManager();
+            SimRulesProfileManager.AddProfile<OneIntClass>(new OneIntClassSimRulesProfile());
+
+            var target = manager.GenerateInstancesWithRules<OneIntClass>(numberOfInstances);
+
+
+            Debug.WriteLine($"Total elapsed time creating {numberOfInstances} instances: {(DateTime.Now - now).ToString("G")}");
+
+
+            Assert.IsNotNull(target);
+            Assert.AreEqual(target.Count, numberOfInstances);
+
+            foreach (var targetInstance in target)
+            {
+                Assert.IsTrue(targetInstance.MyInt >= 0 && targetInstance.MyInt <= 100);
+            }
+        }
+
+
+        [TestMethod]
+        [TestCategory("Laboratory Tests")]
         public void CanAddAttribute()
         {
             var type = typeof(DecoratedOneIntClass);
@@ -190,6 +227,8 @@ namespace SimInstance
         }
 
         [TestMethod]
+        [TestCategory("Fare Nuget Test")]
+
         public void FareDniRegexTest()
         {
             var target = new Xeger("^[0-9]{8}[a-zA-Z]{1}$");
@@ -197,6 +236,8 @@ namespace SimInstance
         }
 
         [TestMethod]
+        [TestCategory("Fare Nuget Test")]
+
         public void FareTest()
         {
             var target = new Xeger("^[a-z]{10}$");
@@ -204,6 +245,7 @@ namespace SimInstance
         }
 
         [TestMethod]
+        [TestCategory("Fare Nuget Test")]
         public void NameGenerationTest()
         {
             var nameList = new List<string>();

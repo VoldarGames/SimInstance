@@ -44,13 +44,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Managers\SimRulesProfileManager.cs" />
     <Compile Include="SimRules\AbstractProfile\AbstractSimRulesProfile.cs" />
     <Compile Include="SimAttributes\Interfaces\ISimAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SimAttributes\BaseClass\SimAttribute.cs" />
     <Compile Include="SimAttributes\Handler\SimAttributesHandler.cs" />
-    <Compile Include="Manager\SimInstanceManager.cs" />
+    <Compile Include="Managers\SimInstanceManager.cs" />
     <Compile Include="SimAttributes\SimRangeAttribute.cs" />
+    <Compile Include="SimRules\AbstractProfile\IAbstractSimRulesProfile.cs" />
+    <Compile Include="SimRules\ISimRule.cs" />
     <Compile Include="SimRules\RuleAppliers\SimRangeRuleApplier.cs" />
     <Compile Include="SimAttributes\SimRegexAttribute.cs" />
     <Compile Include="SimRules\RuleAppliers\SimRegexRuleApplier.cs" />

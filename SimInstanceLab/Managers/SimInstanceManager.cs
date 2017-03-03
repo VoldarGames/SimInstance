@@ -7,7 +7,7 @@ using SimInstanceLab.SimAttributes.BaseClass;
 using SimInstanceLab.SimAttributes.Handler;
 using SimInstanceLab.SimRules;
 
-namespace SimInstanceLab.Manager
+namespace SimInstanceLab.Managers
 {
     public class SimInstanceManager
     {
@@ -18,7 +18,7 @@ namespace SimInstanceLab.Manager
         /// <typeparam name="T"></typeparam>
         /// <param name="simRules"></param>
         /// <returns></returns>
-        public T CreateInstanceWithRules<T>(List<SimRule<T>> simRules)
+        public T CreateInstanceWithRules<T>(List<ISimRule> simRules)
         {
             var type = typeof(T);
 
@@ -110,24 +110,68 @@ namespace SimInstanceLab.Manager
         /// Generates 'count' number of instances according to the simRules
         /// </summary>
         /// <typeparam name="T">New instances Type</typeparam>
-        /// <param name="count">The number of instances that you want to build randomly according to SimRules.</param>
-        /// <param name="simRules">The SimRules affecting this new instance.</param>
+        /// <param name="count">The number of instances that you want to build randomly according to SimRules in ProfileManager.</param>
         /// <returns></returns>
-        public List<T> GenerateInstancesWithRules<T>(int count, List<SimRule<T>> simRules)
+        public List<T> GenerateInstancesWithRules<T>(int count) where T : new()
         {
             var result = new List<T>();
 
             for (var i = 0; i < count; i++)
             {
-                var newEntity = CreateInstanceWithRules<T>(simRules);
-                HandleNewEntitySimAttributes(ref newEntity,simRules);
+                var newEntity = new T();
+                HandleNewEntitySimRulesProfile<T>(ref newEntity);
+                GenerateComplexChildren<T>(ref newEntity);
+                result.Add(newEntity);
+            }
+            return result;
+        }
+
+        private void GenerateComplexChildren<T>(ref T newEntity)
+        {
+            var runtimeProperties = newEntity.GetType().GetRuntimeProperties();
+            foreach (var property in runtimeProperties)
+            {
+                if (!property.PropertyType.IsPrimitive && property.PropertyType != typeof(string))
+                {
+                    var newChildEntity = Activator.CreateInstance(property.PropertyType);
+                    HandleNewEntitySimRulesProfile(ref newChildEntity);
+                    GenerateComplexChildren(ref newChildEntity);
+                    property.SetValue(newEntity, newChildEntity);
+                }
+            }
+        }
+
+        private void HandleNewEntitySimRulesProfile<T>(ref T newEntity)
+        {
+            var simRulesOfT = SimRulesProfileManager.ProfilesDictionary[typeof(T)].SimRules;
+            foreach (var simRule in simRulesOfT)
+            {
+                SimAttributesHandler<T>.ActionDictionary[simRule.SimAttribute.GetType()].Invoke(newEntity.GetType().GetProperty(simRule.PropertyName), newEntity,simRule.SimAttribute);
+            }
+        }
+
+        /// <summary>
+        /// Generates 'count' number of instances in Lab according to the simRules
+        /// </summary>
+        /// <typeparam name="T">New instances Type</typeparam>
+        /// <param name="count">The number of instances that you want to build randomly according to SimRules.</param>
+        /// <param name="simRules">The SimRules affecting this new instance.</param>
+        /// <returns></returns>
+        public List<T> GenerateInstancesWithRulesInLab<T>(int count)
+        {
+            var result = new List<T>();
+
+            for (var i = 0; i < count; i++)
+            {
+                var newEntity = CreateInstanceWithRules<T>(SimRulesProfileManager.ProfilesDictionary[typeof(T)].SimRules);
+                HandleNewEntitySimAttributes(ref newEntity, SimRulesProfileManager.ProfilesDictionary[typeof(T)].SimRules);
                 MapToOriginalEntity(ref newEntity);
                 result.Add(newEntity);
             }
             return result;
         }
 
-        private void HandleNewEntitySimAttributes<T>(ref T newEntity, List<SimRule<T>> simRules = null)
+        private void HandleNewEntitySimAttributes<T>(ref T newEntity, List<ISimRule> simRules = null)
         {
             var runtimeProperties = newEntity.GetType().GetRuntimeProperties();
             foreach (var property in runtimeProperties)
@@ -146,11 +190,9 @@ namespace SimInstanceLab.Manager
                     }
                     else
                     {
-                        //TODO: Create new Type
-                        //Create new Type
-                        //Activator.CreateInstance of new Type with SimAttributes
-                        //HandleNewEntitySimAttributes(ref newChildEntity);
-                        //property.SetValue(newEntity, newChildEntity);
+                        var newChildEntity = CreateInstanceWithRules<T>(SimRulesProfileManager.ProfilesDictionary[property.PropertyType].SimRules);
+                        HandleNewEntitySimAttributes(ref newChildEntity);
+                        property.SetValue(newEntity, newChildEntity);
                     }
                 }
 
@@ -196,7 +238,7 @@ namespace SimInstanceLab.Manager
         /// <param name="newEntity">A new instance with SimAttributes</param>
         private void ApplySimAttribute<T>(PropertyInfo property, SimAttribute simAttribute, ref T newEntity)
         {
-            SimAttributesHandler<T>.ActionDictionary[simAttribute.GetType()].Invoke(property,newEntity);
+            SimAttributesHandler<T>.ActionDictionary[simAttribute.GetType()].Invoke(property,newEntity,simAttribute);
             
         }
 

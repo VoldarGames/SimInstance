@@ -3,12 +3,12 @@ using SimInstanceLab.SimAttributes.BaseClass;
 
 namespace SimInstanceLab.SimRules
 {
-    public class SimRule<T>
+    public class SimRule<T> : ISimRule
     {
-        public Type EntityType;
-        public string PropertyName;
-        public Type PropertyType;
-        public SimAttribute SimAttribute;
+        public Type EntityType { get; set; }
+        public string PropertyName { get; set; }
+        public Type PropertyType { get; set; }
+        public SimAttribute SimAttribute { get; set; }
 
         public SimRule(string propertyName, Type propertyType, SimAttribute simAttribute)
         {
@@ -18,5 +18,6 @@ namespace SimInstanceLab.SimRules
             SimAttribute = simAttribute;
         }
 
+        
     }
 }
