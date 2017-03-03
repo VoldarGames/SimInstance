@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using SimInstanceLab.SimAttributes.BaseClass;
+using SimInstanceLab.SimAttributes.Handler;
+using SimInstanceLab.SimRules;
 
-namespace SimInstance
+namespace SimInstanceLab.Manager
 {
     public class SimInstanceManager
     {

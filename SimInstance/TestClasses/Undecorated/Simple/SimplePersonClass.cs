@@ -1,4 +1,4 @@
-﻿namespace SimInstance
+﻿namespace SimInstance.TestClasses.Undecorated.Simple
 {
     public class SimplePersonClass
     {
@@ -8,3 +8,4 @@
         public string Street { get; set; }
     }
 }
+

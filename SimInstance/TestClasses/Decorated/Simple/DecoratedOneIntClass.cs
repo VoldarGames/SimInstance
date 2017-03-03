@@ -1,4 +1,6 @@
-﻿namespace SimInstance
+﻿using SimInstanceLab.SimAttributes;
+
+namespace SimInstance.TestClasses.Decorated.Simple
 {
     public class DecoratedOneIntClass
     {

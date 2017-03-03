@@ -1,6 +1,7 @@
 ﻿using System;
+using SimInstanceLab.SimAttributes.BaseClass;
 
-namespace SimInstance
+namespace SimInstanceLab.SimAttributes
 {
     public class SimRangeAttribute : SimAttribute
     {

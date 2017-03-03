@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using SimInstanceLab.SimRules.RuleAppliers;
 
-namespace SimInstance
+namespace SimInstanceLab.SimAttributes.Handler
 {
     public static class SimAttributesHandler<T>
     {

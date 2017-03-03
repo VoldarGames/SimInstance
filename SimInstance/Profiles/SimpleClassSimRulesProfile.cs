@@ -1,4 +1,8 @@
-﻿namespace SimInstance
+﻿using SimInstance.TestClasses.Undecorated.Simple;
+using SimInstanceLab.SimAttributes;
+using SimInstanceLab.SimRules.AbstractProfile;
+
+namespace SimInstance.Profiles
 {
     public class SimpleClassSimRulesProfile : AbstractSimRulesProfile<SimplePersonClass>
     {

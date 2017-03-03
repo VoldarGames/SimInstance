@@ -1,6 +1,7 @@
 using System;
+using SimInstanceLab.SimAttributes.BaseClass;
 
-namespace SimInstance
+namespace SimInstanceLab.SimRules
 {
     public class SimRule<T>
     {

@@ -1,7 +1,9 @@
 ﻿using System.Reflection;
 using Fare;
+using SimInstanceLab.SimAttributes;
+using SimInstanceLab.SimRules.RuleAppliers.BaseClass;
 
-namespace SimInstance
+namespace SimInstanceLab.SimRules.RuleAppliers
 {
     public class SimRegexRuleApplier<T> : SimRuleApplier<T>
     {

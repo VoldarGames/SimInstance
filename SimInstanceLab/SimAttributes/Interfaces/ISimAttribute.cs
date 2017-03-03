@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SimInstance
+namespace SimInstanceLab.SimAttributes.Interfaces
 {
     public interface ISimAttribute
     {

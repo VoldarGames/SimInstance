@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace SimInstance
+namespace SimInstanceLab.SimRules.RuleAppliers.BaseClass
 {
     public abstract class SimRuleApplier<T>
     {

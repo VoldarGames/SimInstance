@@ -54,32 +54,28 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="AbstractSimRulesProfile.cs" />
-    <Compile Include="ComplexIntsClass.cs" />
-    <Compile Include="ComplexIntsClassSimRulesProfile.cs" />
-    <Compile Include="DecoratedComplexIntsClass.cs" />
-    <Compile Include="DecoratedSimplePersonClass.cs" />
-    <Compile Include="ISimAttribute.cs" />
-    <Compile Include="DecoratedOneIntClass.cs" />
-    <Compile Include="OneIntClass.cs" />
-    <Compile Include="OneIntClassSimRulesProfile.cs" />
-    <Compile Include="SimAttribute.cs" />
-    <Compile Include="SimAttributesHandler.cs" />
-    <Compile Include="SimInstanceManager.cs" />
-    <Compile Include="SimpleClassSimRulesProfile.cs" />
-    <Compile Include="SimplePersonClass.cs" />
-    <Compile Include="SimRangeAttribute.cs" />
-    <Compile Include="SimRangeRuleApplier.cs" />
-    <Compile Include="SimRegexAttribute.cs" />
-    <Compile Include="SimRegexRuleApplier.cs" />
-    <Compile Include="SimRule.cs" />
-    <Compile Include="SimRuleApplier.cs" />
+    <Compile Include="Profiles\ComplexIntsClassSimRulesProfile.cs" />
+    <Compile Include="Profiles\OneIntClassSimRulesProfile.cs" />
+    <Compile Include="Profiles\SimpleClassSimRulesProfile.cs" />
     <Compile Include="Test.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestClasses\Undecorated\Complex\ComplexIntsClass.cs" />
+    <Compile Include="TestClasses\Decorated\Complex\DecoratedComplexIntsClass.cs" />
+    <Compile Include="TestClasses\Decorated\Simple\DecoratedOneIntClass.cs" />
+    <Compile Include="TestClasses\Decorated\Simple\DecoratedSimplePersonClass.cs" />
+    <Compile Include="TestClasses\Undecorated\Simple\OneIntClass.cs" />
+    <Compile Include="TestClasses\Undecorated\Simple\SimplePersonClass.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SimInstanceLab\SimInstanceLab.csproj">
+      <Project>{BDD424F9-6E4E-4DEA-BD2F-B068193B088E}</Project>
+      <Name>SimInstanceLab</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>

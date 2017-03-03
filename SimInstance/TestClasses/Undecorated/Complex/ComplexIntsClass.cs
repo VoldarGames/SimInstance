@@ -1,4 +1,7 @@
-﻿namespace SimInstance
+﻿
+    using SimInstance.TestClasses.Undecorated.Simple;
+
+namespace SimInstance.TestClasses.Undecorated.Complex
 {
     public class ComplexIntsClass
     {

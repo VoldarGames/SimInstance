@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Reflection;
+using SimInstanceLab.SimAttributes;
+using SimInstanceLab.SimRules.RuleAppliers.BaseClass;
 
-namespace SimInstance
+namespace SimInstanceLab.SimRules.RuleAppliers
 {
     public class SimRangeRuleApplier<T> : SimRuleApplier<T>
     {

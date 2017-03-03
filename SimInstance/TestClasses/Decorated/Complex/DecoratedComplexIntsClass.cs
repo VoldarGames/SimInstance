@@ -1,4 +1,7 @@
-﻿namespace SimInstance
+﻿using SimInstance.TestClasses.Decorated.Simple;
+using SimInstanceLab.SimAttributes;
+
+namespace SimInstance.TestClasses.Decorated.Complex
 {
     public class DecoratedComplexIntsClass
     {

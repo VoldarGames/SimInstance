@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using SimInstanceLab.SimAttributes.BaseClass;
 
-namespace SimInstance
+namespace SimInstanceLab.SimRules.AbstractProfile
 {
     public abstract class AbstractSimRulesProfile<T> where T : new()
     {

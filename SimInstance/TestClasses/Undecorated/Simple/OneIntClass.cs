@@ -1,4 +1,4 @@
-﻿namespace SimInstance
+﻿namespace SimInstance.TestClasses.Undecorated.Simple
 {
     public class OneIntClass
     {

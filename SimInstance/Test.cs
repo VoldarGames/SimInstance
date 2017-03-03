@@ -1,14 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Text;
-using System.Threading.Tasks;
 using Fare;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using SimInstance.Profiles;
+using SimInstance.TestClasses.Decorated.Complex;
+using SimInstance.TestClasses.Decorated.Simple;
+using SimInstance.TestClasses.Undecorated.Complex;
+using SimInstance.TestClasses.Undecorated.Simple;
+using SimInstanceLab.Manager;
+using SimInstanceLab.SimAttributes;
 
 namespace SimInstance
 {
@@ -140,7 +144,8 @@ namespace SimInstance
 
             SimInstanceManager manager = new SimInstanceManager();
             var complexIntsClassSimRulesProfile = new ComplexIntsClassSimRulesProfile();
-            var target = manager.GenerateInstancesWithRules<ComplexIntsClass>(numberOfInstances, complexIntsClassSimRulesProfile.SimRules);
+            
+            var target = manager.GenerateInstancesWithRules<ComplexIntsClass>(numberOfInstances,complexIntsClassSimRulesProfile.SimRules);
 
             
             Debug.WriteLine($"Total elapsed time creating {numberOfInstances} instances: {(DateTime.Now - now).ToString("G")}");
