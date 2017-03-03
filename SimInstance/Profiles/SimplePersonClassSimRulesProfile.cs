@@ -8,11 +8,10 @@ namespace SimInstance.Profiles
     {
         public SimplePersonClassSimRulesProfile()
         {
-            RuleFor(c => c.Age, new SimRangeAttribute(0, 100))
-                .RuleFor(c => c.Name, new SimRegexAttribute("[A-Z][a-z]{5}") )
-                .RuleFor(c => c.SurName, new SimRegexAttribute("[A-Z][a-z]{4}"))
-                .RuleFor(c => c.Street, new SimRegexAttribute("[A-Z][a-z]{5} Street"))
-                ;
+            SimRuleFor(c => c.Age, new SimRangeAttribute(0, 100));
+            SimRuleFor(c => c.Name, new SimRegexAttribute("[A-Z][a-z]{5}") );
+            SimRuleFor(c => c.SurName, new SimRegexAttribute("[A-Z][a-z]{4}"));
+            SimRuleFor(c => c.Street, new SimRegexAttribute("[A-Z][a-z]{5} Street"));
         }
 
 

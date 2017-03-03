@@ -195,6 +195,34 @@ namespace SimInstance
             }
         }
 
+        [TestMethod]
+        [TestCategory("UnDecorated Class - SimRulesProfileManager")]
+
+        public void UnDecoratedComplexClassSimRangeWithRules_CreatedInSimRulesProfileManager()
+        {
+            const int numberOfInstances = 3000;
+            var now = DateTime.Now;
+
+            SimInstanceManager manager = new SimInstanceManager();
+            SimRulesProfileManager.AddProfile<OneIntClass>(new OneIntClassSimRulesProfile());
+            SimRulesProfileManager.AddProfile<ComplexIntsClass>(new ComplexIntsClassSimRulesProfile());
+
+
+            var target = manager.GenerateInstancesWithRules<ComplexIntsClass>(numberOfInstances);
+
+
+            Debug.WriteLine($"Total elapsed time creating {numberOfInstances} instances: {(DateTime.Now - now).ToString("G")}");
+
+
+            Assert.IsNotNull(target);
+            Assert.AreEqual(target.Count, numberOfInstances);
+
+            foreach (var targetInstance in target)
+            {
+                Assert.IsTrue(targetInstance.MyInt >= 0 && targetInstance.MyInt <= 100);
+            }
+        }
+
 
         [TestMethod]
         [TestCategory("Laboratory Tests")]

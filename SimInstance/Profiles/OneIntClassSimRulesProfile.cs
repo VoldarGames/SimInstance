@@ -8,7 +8,7 @@ namespace SimInstance.Profiles
     {
         public OneIntClassSimRulesProfile()
         {
-            RuleFor(c => c.MyInt, new SimRangeAttribute(0, 100));
+            SimRuleFor(c => c.MyInt, new SimRangeAttribute(0, 100));
         }
 
         

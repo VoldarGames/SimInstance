@@ -143,7 +143,7 @@ namespace SimInstanceLab.Managers
 
         private void HandleNewEntitySimRulesProfile<T>(ref T newEntity)
         {
-            var simRulesOfT = SimRulesProfileManager.ProfilesDictionary[typeof(T)].SimRules;
+            var simRulesOfT = SimRulesProfileManager.ProfilesDictionary[newEntity.GetType()].SimRules;
             foreach (var simRule in simRulesOfT)
             {
                 SimAttributesHandler<T>.ActionDictionary[simRule.SimAttribute.GetType()].Invoke(newEntity.GetType().GetProperty(simRule.PropertyName), newEntity,simRule.SimAttribute);
