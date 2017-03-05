@@ -1,3 +1,4 @@
+![SimInstanceLab](SimInstanceLabIcon.png)
 # SimInstance
 
 An small simulation tool for .NET that uses attributes, fluent interface and lambda expressions
