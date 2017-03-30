@@ -3,7 +3,7 @@
 
 An small simulation tool for .NET that uses attributes, fluent interface and lambda expressions
 
-Written by Dani Garcia Sanchez (https://www.linkedin.com/in/dani-garcia-sanchez-30b684138)
+Created and written by Dani Garcia Sanchez (https://www.linkedin.com/in/dani-garcia-sanchez-30b684138)
 
 ## Introduction
 SimInstanceLab is a powerful tool that allows programmers to create lots of instances based on some rules.
