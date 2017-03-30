@@ -1,16 +1,21 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using SimInstanceLab.Managers.Helpers;
+using SimInstanceLab.SimAttributes;
 using SimInstanceLab.SimAttributes.BaseClass;
 using SimInstanceLab.SimAttributes.Handler;
 using SimInstanceLab.SimRules;
 
 namespace SimInstanceLab.Managers
 {
-    public class SimInstanceManager
+    public static class SimInstanceManager
     {
+
+        public static List<Type> LoopDetectionList = new List<Type>();
         /// <summary>
         /// Add dynamically at runtime new SimAttributes to our T Type and creates an instance of this Type.
         ///  It is useful because we can add decorators to our model without putting them in a real scenario and breaking dependencies with this tool.
@@ -18,19 +23,19 @@ namespace SimInstanceLab.Managers
         /// <typeparam name="T"></typeparam>
         /// <param name="simRules"></param>
         /// <returns></returns>
-        public T CreateInstanceWithRules<T>(List<ISimRule> simRules)
+        public static T CreateInstanceWithRules<T>(List<ISimRule> simRules)
         {
             var type = typeof(T);
 
             var assemblyName = new System.Reflection.AssemblyName("SimInstanceLab");
             var assemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(assemblyName, AssemblyBuilderAccess.Run);
             var moduleBuilder = assemblyBuilder.DefineDynamicModule(assemblyName.Name);
-            var typeBuilder = moduleBuilder.DefineType($"SimClass_{type.Name}", System.Reflection.TypeAttributes.Public,typeof(T));
+            var typeBuilder = moduleBuilder.DefineType($"SimClass_{type.Name}", System.Reflection.TypeAttributes.Public, typeof(T));
 
-            
+
             foreach (var propertyInfo in type.GetRuntimeProperties().Where(info => info.DeclaringType != null && info.DeclaringType.IsPublic))
             {
-                var propertyBuilder = typeBuilder.DefineProperty(propertyInfo.Name, PropertyAttributes.HasDefault, CallingConventions.Any, propertyInfo.PropertyType,null);
+                var propertyBuilder = typeBuilder.DefineProperty(propertyInfo.Name, PropertyAttributes.HasDefault, CallingConventions.Any, propertyInfo.PropertyType, null);
                 foreach (var simRule in simRules)
                 {
                     if (propertyInfo.Name == simRule.PropertyName)
@@ -63,7 +68,7 @@ namespace SimInstanceLab.Managers
                             typeBuilder.DefineMethod($"set_{propertyInfo.Name}",
                                 getSetAttributes,
                                 null,
-                                new Type[] {propertyInfo.PropertyType});
+                                new Type[] { propertyInfo.PropertyType });
 
                         ILGenerator setIL = methodBuilderSet.GetILGenerator();
                         setIL.Emit(OpCodes.Ldarg_0);
@@ -85,14 +90,14 @@ namespace SimInstanceLab.Managers
             return (T)instance;
         }
 
-        
+
         /// <summary>
         /// Generates 'count' number of instances that have decorator SimAttributes in their public properties
         /// </summary>
         /// <typeparam name="T">New instances Type</typeparam>
         /// <param name="count">The number of instances that you want to build randomly according to SimAttributes.</param>
         /// <returns></returns>
-        public List<T> GenerateInstances<T>(int count) where T : new()
+        public static List<T> GenerateInstances<T>(int count) where T : new()
         {
             var result = new List<T>();
 
@@ -112,42 +117,129 @@ namespace SimInstanceLab.Managers
         /// <typeparam name="T">New instances Type</typeparam>
         /// <param name="count">The number of instances that you want to build randomly according to SimRules in ProfileManager.</param>
         /// <returns></returns>
-        public List<T> GenerateInstancesWithRules<T>(int count) where T : new()
+        public static List<T> GenerateInstancesWithRules<T>(int count) where T : new()
         {
             var result = new List<T>();
 
             for (var i = 0; i < count; i++)
             {
                 var newEntity = new T();
+
                 HandleNewEntitySimRulesProfile<T>(ref newEntity);
+                LoopDetectionList.Clear();
                 GenerateComplexChildren<T>(ref newEntity);
+
                 result.Add(newEntity);
             }
             return result;
         }
 
-        private void GenerateComplexChildren<T>(ref T newEntity)
+        public static List<object> GenerateInstancesWithRules<T>(int count, bool withContainerInstances) where T : new()
         {
+            var result = new List<object>();
+
+            for (var i = 0; i < count; i++)
+            {
+                var newEntity = new T();
+
+                HandleNewEntitySimRulesProfile<T>(ref newEntity);
+                LoopDetectionList.Clear();
+                GenerateComplexChildren<T>(ref newEntity, withContainerInstances);
+
+                result.Add(newEntity);
+            }
+            return result;
+        }
+
+
+        private static void GenerateComplexChildren<T>(ref T newEntity, bool withContainerInstances = false)
+        {
+            var newEntityType = newEntity.GetType();
+            if (LoopDetectionList.Count(t => t == newEntityType) > 1) return;
+
+
             var runtimeProperties = newEntity.GetType().GetRuntimeProperties();
             foreach (var property in runtimeProperties)
             {
-                if (!property.PropertyType.IsPrimitive && property.PropertyType != typeof(string))
+
+                try
                 {
-                    var newChildEntity = Activator.CreateInstance(property.PropertyType);
-                    HandleNewEntitySimRulesProfile(ref newChildEntity);
-                    GenerateComplexChildren(ref newChildEntity);
-                    property.SetValue(newEntity, newChildEntity);
+
+                    //TODO ARRAYS, COLLECTIONS
+                    if (!PrimitiveOrClassHelper.IsPrimitive(property.PropertyType) && !property.PropertyType.IsArray && !property.PropertyType.IsAssignableFrom(typeof(IEnumerable)) && !property.PropertyType.IsPrimitive && property.PropertyType != typeof(string) && !property.PropertyType.IsInterface)
+                    {
+
+                        if (property.PropertyType.GetInterfaces().Contains(typeof(IEnumerable))) continue;
+                        if (property.DeclaringType.GetInterfaces().Contains(typeof(IEnumerable))) continue;
+                        if (property.SetMethod == null) continue;
+                        object newChildEntity;
+                        var generatedFromExistent = false;
+                        if (withContainerInstances && SimContainer.Container.ContainsKey(property.PropertyType))
+                        {
+                            var randomIndex = RandomSeedHelper.Random.Next(0, SimContainer.Container.GetCount(property.PropertyType) - 1);
+
+                            if (!SimContainer.MemoryContainer.ContainsKey(property.PropertyType))
+                            {
+                                SimContainer.MemoryContainer.Add(property.PropertyType, SimContainer.Container.GetAll(property.PropertyType));
+                            }
+                            if (SimContainer.MemoryContainer.GetCount(property.PropertyType) == 0) throw new SimCantGenerateException($"{property.PropertyType} doesn't have any instance, you need to generate at least one.");
+                            var existingEntityList = SimContainer.MemoryContainer.GetAll(property.PropertyType);
+                            newChildEntity = existingEntityList[randomIndex];
+                            generatedFromExistent = true;
+
+
+                        }
+                        else
+                        {
+                            newChildEntity = Activator.CreateInstance(property.PropertyType);
+
+                            if (newChildEntity == null) continue;
+                            if (SimRulesProfileManager.IgnoreTypeList.Contains(property.PropertyType)) continue;
+                            if (SimRulesProfileManager.ProfilesDictionary.ContainsKey(newEntity.GetType()) &&
+                                SimRulesProfileManager.ProfilesDictionary[newEntity.GetType()]
+                                    .SimRules.Any(
+                                        c =>
+                                            c.SimAttribute.GetType() == typeof(SimIgnoreAttribute) &&
+                                            c.PropertyName == property.Name))
+                            {
+                                continue;
+                            }
+
+                            HandleNewEntitySimRulesProfile(ref newChildEntity);
+                        }
+
+                        if (!generatedFromExistent)
+                        {
+                            LoopDetectionList.Add(newChildEntity.GetType());
+                            GenerateComplexChildren(ref newChildEntity);
+                            LoopDetectionList.Remove(newChildEntity.GetType());
+                        }
+
+                        property.SetValue(newEntity, newChildEntity);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw new GenerateComplexChildrenException($"{property.Name} on {property.DeclaringType.FullName} failed to create instance. error {ex.Message} ");
                 }
             }
         }
 
-        private void HandleNewEntitySimRulesProfile<T>(ref T newEntity)
+        private static void HandleNewEntitySimRulesProfile<T>(ref T newEntity)
         {
+#pragma warning disable S2955 // Generic parameters not constrained to reference types should not be compared to "null"
+            if (newEntity == null) return;
+#pragma warning restore S2955 // Generic parameters not constrained to reference types should not be compared to "null"
+            //todo gestionar por profiler new intsnce ???
+            if (!SimRulesProfileManager.ProfilesDictionary.ContainsKey(newEntity.GetType())) return;
             var simRulesOfT = SimRulesProfileManager.ProfilesDictionary[newEntity.GetType()].SimRules;
+
             foreach (var simRule in simRulesOfT)
             {
-                SimAttributesHandler<T>.ActionDictionary[simRule.SimAttribute.GetType()].Invoke(newEntity.GetType().GetProperty(simRule.PropertyName), newEntity,simRule.SimAttribute);
+                SimAttributesHandler<T>.ActionDictionary[simRule.SimAttribute.GetType()].Invoke(newEntity.GetType().GetProperty(simRule.PropertyName), newEntity, simRule.SimAttribute);
             }
+
+
         }
 
         /// <summary>
@@ -157,7 +249,7 @@ namespace SimInstanceLab.Managers
         /// <param name="count">The number of instances that you want to build randomly according to SimRules.</param>
         /// <param name="simRules">The SimRules affecting this new instance.</param>
         /// <returns></returns>
-        public List<T> GenerateInstancesWithRulesInLab<T>(int count)
+        public static List<T> GenerateInstancesWithRulesInLab<T>(int count)
         {
             var result = new List<T>();
 
@@ -171,7 +263,7 @@ namespace SimInstanceLab.Managers
             return result;
         }
 
-        private void HandleNewEntitySimAttributes<T>(ref T newEntity, List<ISimRule> simRules = null)
+        private static void HandleNewEntitySimAttributes<T>(ref T newEntity, List<ISimRule> simRules = null)
         {
             var runtimeProperties = newEntity.GetType().GetRuntimeProperties();
             foreach (var property in runtimeProperties)
@@ -186,7 +278,7 @@ namespace SimInstanceLab.Managers
                     {
                         var newChildEntity = Activator.CreateInstance(property.PropertyType);
                         HandleNewEntitySimAttributes(ref newChildEntity);
-                        property.SetValue(newEntity,newChildEntity);
+                        property.SetValue(newEntity, newChildEntity);
                     }
                     else
                     {
@@ -197,17 +289,17 @@ namespace SimInstanceLab.Managers
                 }
 
             }
-           
+
         }
 
-        private void MapToOriginalEntity<T>(ref T newEntity)
+        private static void MapToOriginalEntity<T>(ref T newEntity)
         {
             var newEntityType = newEntity.GetType();
             var newEntityPropertiesLab = newEntityType.GetRuntimeProperties().Where(info => info.Module.ScopeName == "SimInstanceLab").ToList();
             var newEntityProperties = newEntityType.GetRuntimeProperties().Except(newEntityPropertiesLab).ToList();
             for (var i = 0; i < newEntityProperties.Count; i++)
             {
-                newEntityProperties[i].SetValue(newEntity,newEntityPropertiesLab[i].GetValue(newEntity));
+                newEntityProperties[i].SetValue(newEntity, newEntityPropertiesLab[i].GetValue(newEntity));
             }
 
         }
@@ -218,15 +310,15 @@ namespace SimInstanceLab.Managers
         /// <typeparam name="T">Type of newEntity instance.</typeparam>
         /// <param name="newEntity">A new instance with SimAttributes</param>
         /// <param name="property">A property in newEntity.</param>
-        private void ApplySimAttributes<T>(ref T newEntity, PropertyInfo property)
+        private static void ApplySimAttributes<T>(ref T newEntity, PropertyInfo property)
         {
 
             foreach (var simAttribute in property.GetCustomAttributes<SimAttribute>())
             {
-                ApplySimAttribute<T>(property,(SimAttribute)simAttribute, ref newEntity);
-                
+                ApplySimAttribute<T>(property, (SimAttribute)simAttribute, ref newEntity);
+
             }
-            
+
         }
 
         /// <summary>
@@ -236,12 +328,18 @@ namespace SimInstanceLab.Managers
         /// <param name="property">A property in newEntity.</param>
         /// <param name="simAttribute">The SimAttribute that we need to handle</param>
         /// <param name="newEntity">A new instance with SimAttributes</param>
-        private void ApplySimAttribute<T>(PropertyInfo property, SimAttribute simAttribute, ref T newEntity)
+        private static void ApplySimAttribute<T>(PropertyInfo property, SimAttribute simAttribute, ref T newEntity)
         {
-            SimAttributesHandler<T>.ActionDictionary[simAttribute.GetType()].Invoke(property,newEntity,simAttribute);
-            
+            SimAttributesHandler<T>.ActionDictionary[simAttribute.GetType()].Invoke(property, newEntity, simAttribute);
+
         }
 
-        
+
+
+    }
+
+    internal class GenerateComplexChildrenException : Exception
+    {
+        public GenerateComplexChildrenException(string s) : base(s) { }
     }
 }

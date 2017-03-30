@@ -9,11 +9,12 @@ namespace SimInstanceLab.SimRules.AbstractProfile
     {
         public List<ISimRule> SimRules { get; set; } = new List<ISimRule>();
 
-        public void SimRuleFor(Expression<Func<T, object>> func, SimAttribute simAttribute)
+
+        public void SimRuleFor<TReturnType>(Expression<Func<T, TReturnType>> func, SimAttribute simAttribute)
         {
             MemberExpression operand;
 
-            var body =  func.Body as UnaryExpression;
+            var body = func.Body as UnaryExpression;
             if (body != null)
             {
                 operand = body.Operand as MemberExpression;
@@ -23,12 +24,12 @@ namespace SimInstanceLab.SimRules.AbstractProfile
                 operand = func.Body as MemberExpression;
             }
             if (operand == null) throw new NullReferenceException("SimRuleFor Operand Expression null.");
-           
+
             SimRules.Add(new SimRule<T>(operand.Member.Name, func.ReturnType, simAttribute));
-            
+
         }
 
-       
+
 
     }
 }

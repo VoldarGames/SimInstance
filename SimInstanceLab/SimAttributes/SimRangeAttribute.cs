@@ -12,7 +12,7 @@ namespace SimInstanceLab.SimAttributes
         /// </summary>
         /// <param name="min"></param>
         /// <param name="max"></param>
-        
+
         public SimRangeAttribute(int min, int max)
         {
             MinRange = min;
@@ -21,12 +21,12 @@ namespace SimInstanceLab.SimAttributes
 
         public override Type[] GetParameterTypes()
         {
-            return new[] {typeof(int), typeof(int)};
+            return new[] { typeof(int), typeof(int) };
         }
 
         public override object[] GetParameterValues()
         {
-            return new object[] {MinRange, MaxRange};
+            return new object[] { MinRange, MaxRange };
         }
     }
 }

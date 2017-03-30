@@ -28,8 +28,7 @@ namespace SimInstance
             const int numberOfInstances = 3000;
             var now = DateTime.Now;
 
-            SimInstanceManager manager = new SimInstanceManager();
-            var target = manager.GenerateInstances<DecoratedOneIntClass>(numberOfInstances);
+            var target = SimInstanceManager.GenerateInstances<DecoratedOneIntClass>(numberOfInstances);
 
             Debug.WriteLine($"Total elapsed time creating {numberOfInstances} instances: {(DateTime.Now - now).ToString("G")}");
             Assert.IsNotNull(target);
@@ -50,12 +49,12 @@ namespace SimInstance
             const int numberOfInstances = 3000;
             var now = DateTime.Now;
 
-            SimInstanceManager manager = new SimInstanceManager();
+           
 
             SimRulesProfileManager.AddProfile<OneIntClass>(new OneIntClassSimRulesProfile());
             
             Debug.WriteLine($"Total elapsed time creating {numberOfInstances} instances: {(DateTime.Now-now).ToString("G")}");
-            var target = manager.GenerateInstancesWithRulesInLab<OneIntClass>(numberOfInstances);
+            var target = SimInstanceManager.GenerateInstancesWithRulesInLab<OneIntClass>(numberOfInstances);
 
 
             Assert.IsNotNull(target);
@@ -75,10 +74,9 @@ namespace SimInstance
             const int numberOfInstances = 3000;
             var now = DateTime.Now;
 
-            SimInstanceManager manager = new SimInstanceManager();
-
+        
             Debug.WriteLine($"Total elapsed time creating {numberOfInstances} instances: {(DateTime.Now - now).ToString("G")}");
-            var target = manager.GenerateInstances<DecoratedSimplePersonClass>(numberOfInstances);
+            var target = SimInstanceManager.GenerateInstances<DecoratedSimplePersonClass>(numberOfInstances);
 
 
             Assert.IsNotNull(target);
@@ -101,12 +99,11 @@ namespace SimInstance
             const int numberOfInstances = 3000;
             var now = DateTime.Now;
 
-            SimInstanceManager manager = new SimInstanceManager();
-
+           
             SimRulesProfileManager.AddProfile<SimplePersonClass>(new SimplePersonClassSimRulesProfile());
 
             Debug.WriteLine($"Total elapsed time creating {numberOfInstances} instances: {(DateTime.Now - now).ToString("G")}");
-            var target = manager.GenerateInstancesWithRulesInLab<SimplePersonClass>(numberOfInstances);
+            var target = SimInstanceManager.GenerateInstancesWithRulesInLab<SimplePersonClass>(numberOfInstances);
 
 
             Assert.IsNotNull(target);
@@ -128,8 +125,7 @@ namespace SimInstance
             const int numberOfInstances = 3000;
             var now = DateTime.Now;
 
-            SimInstanceManager manager = new SimInstanceManager();
-            var target = manager.GenerateInstances<DecoratedComplexIntsClass>(numberOfInstances);
+            var target = SimInstanceManager.GenerateInstances<DecoratedComplexIntsClass>(numberOfInstances);
 
             Debug.WriteLine($"Total elapsed time creating {numberOfInstances} instances: {(DateTime.Now - now).ToString("G")}");
             Assert.IsNotNull(target);
@@ -149,13 +145,12 @@ namespace SimInstance
             const int numberOfInstances = 3000;
             var now = DateTime.Now;
 
-            SimInstanceManager manager = new SimInstanceManager();
-
+          
             SimRulesProfileManager.AddProfile<ComplexIntsClass>(new ComplexIntsClassSimRulesProfile());
             SimRulesProfileManager.AddProfile<OneIntClass>(new OneIntClassSimRulesProfile());
 
             
-            var target = manager.GenerateInstancesWithRulesInLab<ComplexIntsClass>(numberOfInstances);
+            var target = SimInstanceManager.GenerateInstancesWithRulesInLab<ComplexIntsClass>(numberOfInstances);
 
             
             Debug.WriteLine($"Total elapsed time creating {numberOfInstances} instances: {(DateTime.Now - now).ToString("G")}");
@@ -177,10 +172,9 @@ namespace SimInstance
             const int numberOfInstances = 3000;
             var now = DateTime.Now;
 
-            SimInstanceManager manager = new SimInstanceManager();
-            SimRulesProfileManager.AddProfile<OneIntClass>(new OneIntClassSimRulesProfile());
+           SimRulesProfileManager.AddProfile<OneIntClass>(new OneIntClassSimRulesProfile());
 
-            var target = manager.GenerateInstancesWithRules<OneIntClass>(numberOfInstances);
+            var target = SimInstanceManager.GenerateInstancesWithRules<OneIntClass>(numberOfInstances);
 
 
             Debug.WriteLine($"Total elapsed time creating {numberOfInstances} instances: {(DateTime.Now - now).ToString("G")}");
@@ -203,12 +197,12 @@ namespace SimInstance
             const int numberOfInstances = 3000;
             var now = DateTime.Now;
 
-            SimInstanceManager manager = new SimInstanceManager();
+          
             SimRulesProfileManager.AddProfile<OneIntClass>(new OneIntClassSimRulesProfile());
             SimRulesProfileManager.AddProfile<ComplexIntsClass>(new ComplexIntsClassSimRulesProfile());
 
 
-            var target = manager.GenerateInstancesWithRules<ComplexIntsClass>(numberOfInstances);
+            var target = SimInstanceManager.GenerateInstancesWithRules<ComplexIntsClass>(numberOfInstances);
 
 
             Debug.WriteLine($"Total elapsed time creating {numberOfInstances} instances: {(DateTime.Now - now).ToString("G")}");
@@ -230,18 +224,21 @@ namespace SimInstance
         {
             var type = typeof(DecoratedOneIntClass);
 
-            var assemblyName = new System.Reflection.AssemblyName("SimInstanceLab");
+            var assemblyName = new AssemblyName("SimInstanceLab");
             var assemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(assemblyName, AssemblyBuilderAccess.Run);
             var moduleBuilder = assemblyBuilder.DefineDynamicModule(assemblyName.Name);
-            var typeBuilder = moduleBuilder.DefineType($"SimClass_{type.Name}", System.Reflection.TypeAttributes.Public, type);
+            var typeBuilder = moduleBuilder.DefineType($"SimClass_{type.Name}", TypeAttributes.Public, type);
 
             var propertyBuilder = typeBuilder.DefineProperty("MyInt", PropertyAttributes.None, CallingConventions.Any,type.GetProperty("MyInt").PropertyType, null);
 
             var attrCtorParams = new[] { typeof(int), typeof(int) };
             var attrCtorInfo = typeof(SimRangeAttribute).GetConstructor(attrCtorParams);
-            var attrBuilder = new CustomAttributeBuilder(attrCtorInfo, new object[] { 0,10 });
-            //typeBuilder.SetCustomAttribute(attrBuilder);
-            propertyBuilder.SetCustomAttribute(attrBuilder);
+            if (attrCtorInfo != null)
+            {
+                var attrBuilder = new CustomAttributeBuilder(attrCtorInfo, new object[] { 0,10 });
+                //typeBuilder.SetCustomAttribute(attrBuilder);
+                propertyBuilder.SetCustomAttribute(attrBuilder);
+            }
 
             var newType = typeBuilder.CreateType();
             var instance = (DecoratedOneIntClass)Activator.CreateInstance(newType);

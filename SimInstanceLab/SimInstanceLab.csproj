@@ -44,7 +44,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Managers\Helpers\DependencyDetectionLoopTool.cs" />
+    <Compile Include="Managers\Helpers\PrimitiveOrClassHelper.cs" />
+    <Compile Include="Managers\Helpers\RandomSeedHelper.cs" />
+    <Compile Include="Managers\ISimProvider.cs" />
+    <Compile Include="Managers\SimCantGenerateException.cs" />
+    <Compile Include="Managers\SimContainer.cs" />
+    <Compile Include="Managers\SimMemoryProvider.cs" />
     <Compile Include="Managers\SimRulesProfileManager.cs" />
+    <Compile Include="Managers\Stage.cs" />
+    <Compile Include="SimAttributes\SimForeignKeyAttribute.cs" />
+    <Compile Include="SimAttributes\SimIgnoreAttribute.cs" />
+    <Compile Include="SimAttributes\SimIsNullAttribute.cs" />
+    <Compile Include="SimAttributes\SimOneToOneRelationshipAttribute.cs" />
+    <Compile Include="SimAttributes\SimPrimaryKeyAttribute.cs" />
     <Compile Include="SimRules\AbstractProfile\AbstractSimRulesProfile.cs" />
     <Compile Include="SimAttributes\Interfaces\ISimAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -54,6 +67,10 @@
     <Compile Include="SimAttributes\SimRangeAttribute.cs" />
     <Compile Include="SimRules\AbstractProfile\IAbstractSimRulesProfile.cs" />
     <Compile Include="SimRules\ISimRule.cs" />
+    <Compile Include="SimRules\PrimaryKeyMap\SimPrimaryKeyMap.cs" />
+    <Compile Include="SimRules\RuleAppliers\SimForeignKeyRuleApplier.cs" />
+    <Compile Include="SimRules\RuleAppliers\SimIsNullRuleApplier.cs" />
+    <Compile Include="SimRules\RuleAppliers\SimPrimaryKeyRuleApplier.cs" />
     <Compile Include="SimRules\RuleAppliers\SimRangeRuleApplier.cs" />
     <Compile Include="SimAttributes\SimRegexAttribute.cs" />
     <Compile Include="SimRules\RuleAppliers\SimRegexRuleApplier.cs" />

@@ -16,12 +16,12 @@ namespace SimInstanceLab.SimAttributes
         }
         public override Type[] GetParameterTypes()
         {
-            return new[] {typeof(string)};
+            return new[] { typeof(string) };
         }
 
         public override object[] GetParameterValues()
         {
-            return new object[] {RegularExpression};
+            return new object[] { RegularExpression };
         }
     }
 }
