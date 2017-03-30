@@ -41,9 +41,8 @@ Decorate your model domain entities with SimAttributes
 ```
 
 Create the number of instances you want!
-```csharp
-    var simInstanceManager = new SimInstanceManager();
-    var generatedInstances = simInstanceManager.GenerateInstances<DecoratedOneIntClass>(10);
+```csharp   
+    var generatedInstances = SimInstanceManager.GenerateInstances<DecoratedOneIntClass>(10);
 ```
 
 ### Profiles
@@ -61,7 +60,44 @@ First you need to create a profile, just inherit from "AbstractSimRulesProfile<>
 Next create the number of instances you want! (You need to add the profile)
 
 ```csharp
-    var simInstanceManager = new SimInstanceManager();
     SimRulesProfileManager.AddProfile<OneIntClass>(new OneIntClassSimRulesProfile());
-    var generatedInstances = simInstanceManager.GenerateInstancesWithRules<OneIntClass>(numberOfInstances);
+    var generatedInstances = SimInstanceManager.GenerateInstancesWithRules<OneIntClass>(numberOfInstances);
 ```
+
+### Providers
+
+Implement your own provider with this interface
+
+```csharp
+public interface ISimProvider
+    {
+        void Add(Type type, List<object> entities);
+        object GetById(Type type, int id);
+        bool ContainsKey(Type propertyType);
+        List<object> GetAll(Type type);
+        int GetCount(Type type);
+    }
+```
+
+### Define and configure Stages
+
+```csharp
+public class AgentsStage : Stage
+    {
+        public AgentsStage()
+        {
+            this
+                .UseSeed((int) DateTime.Now.Ticks)
+                .ForceAction(() =>
+                {
+                    PrimitiveOrClassHelper.PrimitiveTypes.Add(typeof(ObjectChangeTracker));
+                })
+                .UseProfile(new AgentSimRulesProfile(), forcePrimaryKey: true)
+                .UseProfile(new ClientsSimRulesProfile(), forcePrimaryKey: true)
+                .UseProvider(new MyAwesomeProvider())
+                .IgnoreAllTypes(typeof(ObjectChangeTracker), typeof(IEnumerable<>));
+
+        }
+    }
+```
+
