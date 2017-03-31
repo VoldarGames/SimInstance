@@ -1,16 +1,24 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using SimInstanceLab.Managers.Helpers;
 using SimInstanceLab.SimRules.PrimaryKeyMap;
 
 namespace SimInstanceLab.Managers
 {
-    public class SimMemoryProvider : ISimProvider
+    public class SimDatabaseInMemoryProvider : ISimProvider
     {
         private readonly Dictionary<Type, List<object>> _container = new Dictionary<Type, List<object>>();
-
+        
         public void Add(Type type, List<object> entities)
         {
+            foreach (var entity in entities)
+            {
+                var primaryKeyPropertyName = SimPrimaryKeyMap.GetPrimaryKeyPropertyName(entity.GetType());
+                var primaryKeyProperty = entity.GetType().GetProperty(primaryKeyPropertyName);
+                primaryKeyProperty.SetValue(entity, RandomSeedHelper.GetNextAutoIncrementalNumber());
+
+            }
             _container.Add(type, entities);
         }
 
@@ -23,7 +31,7 @@ namespace SimInstanceLab.Managers
 
         public object GetById(Type type, int id)
         {
-            return _container[type].Single(o => (int) o.GetType().GetProperty(SimPrimaryKeyMap.GetPrimaryKeyPropertyName(type)).GetValue(o) == id);
+            return _container[type].Single(o =>(int)o.GetType().GetProperty(SimPrimaryKeyMap.GetPrimaryKeyPropertyName(type)).GetValue(o) == id);
         }
 
         public bool ContainsKey(Type propertyType)

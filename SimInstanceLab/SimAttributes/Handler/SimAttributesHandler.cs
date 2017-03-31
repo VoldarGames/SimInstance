@@ -13,6 +13,7 @@ namespace SimInstanceLab.SimAttributes.Handler
             {typeof(SimRangeAttribute), (property, newEntity, simAttribute) => new SimRangeRuleApplier<T>().ApplyRule(property,ref newEntity,simAttribute)},
             {typeof(SimRegexAttribute),(property, newEntity, simAttribute) => new SimRegexRuleApplier<T>().ApplyRule(property,ref newEntity,simAttribute)},
             {typeof(SimIgnoreAttribute), (property, newEntity, simAttribute) => { }},
+            {typeof(SimNavigationAttribute), (property, newEntity, simAttribute) => new SimNavigationRuleApplier<T>().ApplyRule(property,ref newEntity,simAttribute)},
             {typeof(SimIsNullAttribute),(property, newEntity, simAttribute) => new SimIsNullRuleApplier<T>().ApplyRule(property,ref newEntity,simAttribute)},
             {typeof(SimPrimaryKeyAttribute),(property, newEntity, simAttribute) => new SimPrimaryKeyRuleApplier<T>().ApplyRule(property,ref newEntity,simAttribute)},
             {typeof(SimForeignKeyAttribute), (property, newEntity, simAttribute) => new SimForeignKeyRuleApplier<T>().ApplyRule(property,ref newEntity,simAttribute)},

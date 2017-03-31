@@ -50,12 +50,14 @@
     <Compile Include="Managers\ISimProvider.cs" />
     <Compile Include="Managers\SimCantGenerateException.cs" />
     <Compile Include="Managers\SimContainer.cs" />
+    <Compile Include="Managers\SimDatabaseInMemoryProvider.cs" />
     <Compile Include="Managers\SimMemoryProvider.cs" />
     <Compile Include="Managers\SimRulesProfileManager.cs" />
     <Compile Include="Managers\Stage.cs" />
     <Compile Include="SimAttributes\SimForeignKeyAttribute.cs" />
     <Compile Include="SimAttributes\SimIgnoreAttribute.cs" />
     <Compile Include="SimAttributes\SimIsNullAttribute.cs" />
+    <Compile Include="SimAttributes\SimNavigationAttribute.cs" />
     <Compile Include="SimAttributes\SimOneToOneRelationshipAttribute.cs" />
     <Compile Include="SimAttributes\SimPrimaryKeyAttribute.cs" />
     <Compile Include="SimRules\AbstractProfile\AbstractSimRulesProfile.cs" />
@@ -67,6 +69,7 @@
     <Compile Include="SimAttributes\SimRangeAttribute.cs" />
     <Compile Include="SimRules\AbstractProfile\IAbstractSimRulesProfile.cs" />
     <Compile Include="SimRules\ISimRule.cs" />
+    <Compile Include="SimRules\NavigationMap\SimNavigationMap.cs" />
     <Compile Include="SimRules\PrimaryKeyMap\SimPrimaryKeyMap.cs" />
     <Compile Include="SimRules\RuleAppliers\SimForeignKeyRuleApplier.cs" />
     <Compile Include="SimRules\RuleAppliers\SimIsNullRuleApplier.cs" />

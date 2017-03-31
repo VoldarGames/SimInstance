@@ -9,6 +9,7 @@ using SimInstanceLab.SimAttributes;
 using SimInstanceLab.SimAttributes.BaseClass;
 using SimInstanceLab.SimAttributes.Handler;
 using SimInstanceLab.SimRules;
+using SimInstanceLab.SimRules.NavigationMap;
 
 namespace SimInstanceLab.Managers
 {
@@ -176,15 +177,27 @@ namespace SimInstanceLab.Managers
                         var generatedFromExistent = false;
                         if (withContainerInstances && SimContainer.Container.ContainsKey(property.PropertyType))
                         {
-                            var randomIndex = RandomSeedHelper.Random.Next(0, SimContainer.Container.GetCount(property.PropertyType) - 1);
 
                             if (!SimContainer.MemoryContainer.ContainsKey(property.PropertyType))
                             {
                                 SimContainer.MemoryContainer.Add(property.PropertyType, SimContainer.Container.GetAll(property.PropertyType));
                             }
                             if (SimContainer.MemoryContainer.GetCount(property.PropertyType) == 0) throw new SimCantGenerateException($"{property.PropertyType} doesn't have any instance, you need to generate at least one.");
-                            var existingEntityList = SimContainer.MemoryContainer.GetAll(property.PropertyType);
-                            newChildEntity = existingEntityList[randomIndex];
+
+                            if (SimNavigationMap.Exist(newEntityType, property.Name))
+                            {
+                                var foreignKeyPropertyName = SimNavigationMap.GetNavigationForeignKeyPropertyName(newEntityType, property.Name);
+                                newChildEntity = SimContainer.MemoryContainer.GetById(property.PropertyType,
+                                    (int) newEntity.GetType().GetProperty(foreignKeyPropertyName).GetValue(newEntity));
+                            }
+                            else
+                            {
+                                var randomIndex = RandomSeedHelper.Random.Next(0,
+                                    SimContainer.Container.GetCount(property.PropertyType) - 1);
+                                var existingEntityList = SimContainer.MemoryContainer.GetAll(property.PropertyType);
+                                newChildEntity = existingEntityList[randomIndex];
+                            }
+
                             generatedFromExistent = true;
 
 

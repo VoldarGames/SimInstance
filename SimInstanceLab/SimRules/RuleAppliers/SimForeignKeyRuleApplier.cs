@@ -2,7 +2,9 @@
 using System.Linq;
 using System.Reflection;
 using SimInstanceLab.Managers;
+using SimInstanceLab.Managers.Helpers;
 using SimInstanceLab.SimAttributes.BaseClass;
+using SimInstanceLab.SimRules.NavigationMap;
 using SimInstanceLab.SimRules.PrimaryKeyMap;
 using SimInstanceLab.SimRules.RuleAppliers.BaseClass;
 
@@ -28,8 +30,16 @@ namespace SimInstanceLab.SimRules.RuleAppliers
         }
         private static int GetRandomRange(int min, int max)
         {
-            var rand = new Random((int)DateTime.Now.Ticks);
-            return rand.Next(min, max);
+            return RandomSeedHelper.Random.Next(min, max);
         }
+    }
+
+    public class SimNavigationRuleApplier<T> : SimRuleApplier<T>
+    {
+        public override void ApplyRule(PropertyInfo property, ref T newEntity, SimAttribute simAttribute)
+        {
+            SimNavigationMap.AddNewNavigation(newEntity.GetType(),property.Name,simAttribute.GetParameterValues().FirstOrDefault() as string);
+        }
+       
     }
 }

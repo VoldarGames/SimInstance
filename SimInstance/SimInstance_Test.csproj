@@ -55,14 +55,20 @@
   </Choose>
   <ItemGroup>
     <Compile Include="Profiles\ComplexIntsClassSimRulesProfile.cs" />
+    <Compile Include="Profiles\ModelProfiles\ModelIntClassSimRulesProfile.cs" />
+    <Compile Include="Profiles\ModelProfiles\ModelStringClassSimRulesProfile.cs" />
     <Compile Include="Profiles\OneIntClassSimRulesProfile.cs" />
     <Compile Include="Profiles\SimplePersonClassSimRulesProfile.cs" />
+    <Compile Include="SimAttributesTest.cs" />
+    <Compile Include="Stages\ModelStage.cs" />
     <Compile Include="Test.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestClasses\Undecorated\Complex\ComplexIntsClass.cs" />
     <Compile Include="TestClasses\Decorated\Complex\DecoratedComplexIntsClass.cs" />
     <Compile Include="TestClasses\Decorated\Simple\DecoratedOneIntClass.cs" />
     <Compile Include="TestClasses\Decorated\Simple\DecoratedSimplePersonClass.cs" />
+    <Compile Include="TestClasses\Undecorated\Complex\Model\ModelIntClass.cs" />
+    <Compile Include="TestClasses\Undecorated\Complex\Model\ModelStringClass.cs" />
     <Compile Include="TestClasses\Undecorated\Simple\OneIntClass.cs" />
     <Compile Include="TestClasses\Undecorated\Simple\SimplePersonClass.cs" />
   </ItemGroup>
