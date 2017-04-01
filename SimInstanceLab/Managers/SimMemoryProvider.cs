@@ -23,7 +23,11 @@ namespace SimInstanceLab.Managers
 
         public object GetById(Type type, int id)
         {
-            return _container[type].Single(o => (int) o.GetType().GetProperty(SimPrimaryKeyMap.GetPrimaryKeyPropertyName(type)).GetValue(o) == id);
+            var containerPropertyType = _container[type]
+                                        .FirstOrDefault()
+                                        .GetType()
+                                        .GetProperty(SimPrimaryKeyMap.GetPrimaryKeyPropertyName(type));
+            return _container[type].AsParallel().Single(o => (int)containerPropertyType.GetValue(o) == id);
         }
 
         public bool ContainsKey(Type propertyType)
