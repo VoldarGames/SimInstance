@@ -75,6 +75,7 @@
     <Compile Include="SimRules\AbstractProfile\IAbstractSimRulesProfile.cs" />
     <Compile Include="SimRules\ISimRule.cs" />
     <Compile Include="SimRules\NavigationMap\SimNavigationMap.cs" />
+    <Compile Include="SimRules\NullPropertiesMap\SimNullPropertiesMap.cs" />
     <Compile Include="SimRules\PrimaryKeyMap\SimPrimaryKeyMap.cs" />
     <Compile Include="SimRules\RuleAppliers\SimForeignKeyRuleApplier.cs" />
     <Compile Include="SimRules\RuleAppliers\SimIsNullRuleApplier.cs" />

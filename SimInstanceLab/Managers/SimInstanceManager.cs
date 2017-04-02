@@ -10,6 +10,7 @@ using SimInstanceLab.SimAttributes.BaseClass;
 using SimInstanceLab.SimAttributes.Handler;
 using SimInstanceLab.SimRules;
 using SimInstanceLab.SimRules.NavigationMap;
+using SimInstanceLab.SimRules.NullPropertiesMap;
 
 namespace SimInstanceLab.Managers
 {
@@ -169,7 +170,7 @@ namespace SimInstanceLab.Managers
                     //TODO ARRAYS, COLLECTIONS
                     if (!PrimitiveOrClassHelper.IsPrimitive(property.PropertyType) && !property.PropertyType.IsArray && !property.PropertyType.IsAssignableFrom(typeof(IEnumerable)) && !property.PropertyType.IsPrimitive && property.PropertyType != typeof(string) && !property.PropertyType.IsInterface)
                     {
-
+                        if(SimNullPropertiesMap.NullProperties.Contains(property)) continue;
                         if (property.PropertyType.GetInterfaces().Contains(typeof(IEnumerable))) continue;
                         if (property.DeclaringType.GetInterfaces().Contains(typeof(IEnumerable))) continue;
                         if (property.SetMethod == null) continue;

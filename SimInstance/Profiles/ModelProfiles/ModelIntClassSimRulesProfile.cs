@@ -14,6 +14,8 @@ namespace SimInstance.Profiles.ModelProfiles
            SimRuleFor(c => c.ModelStringId, new SimForeignKeyAttribute(typeof(ModelStringClass)));
            SimRuleFor(c => c.MyInt, new SimRangeAttribute(0,100));
            SimRuleFor(c => c.MyStringClass, new SimNavigationAttribute(nameof(ModelIntClass.ModelStringId)));
+           //SimRuleFor(c => c.MyStringClass, new SimIsNullAttribute());
+
         }
 
 
