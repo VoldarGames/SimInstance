@@ -60,6 +60,7 @@
     <Compile Include="Profiles\OneIntClassSimRulesProfile.cs" />
     <Compile Include="Profiles\SimplePersonClassSimRulesProfile.cs" />
     <Compile Include="SimAttributesTest.cs" />
+    <Compile Include="Stages\FileModelStage.cs" />
     <Compile Include="Stages\ModelStage.cs" />
     <Compile Include="Test.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

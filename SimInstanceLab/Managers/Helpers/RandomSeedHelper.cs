@@ -8,7 +8,7 @@ namespace SimInstanceLab.Managers.Helpers
         public static Random Random = new Random((int)DateTime.Now.Ticks);
 
         private static int _seed;
-        private static int _count;
+        private static uint _count;
 
 
         public static int Seed
@@ -26,10 +26,15 @@ namespace SimInstanceLab.Managers.Helpers
             Seed = seed;
         }
 
+        public static void SetCounter(uint value)
+        {
+            _count = value;
+        }
+
         public static int GetNextAutoIncrementalNumber()
         {
             _count++;
-            return _count;
+            return (int) _count;
         }
 
         public static IEnumerable<int> GetRandomNumber()

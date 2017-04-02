@@ -12,6 +12,12 @@ namespace SimInstanceLab.Managers
         
         public void Add(Type type, List<object> entities)
         {
+            ManagePrimaryKeys(entities);
+            _container.Add(type, entities);
+        }
+
+        private static void ManagePrimaryKeys(List<object> entities)
+        {
             foreach (var entity in entities)
             {
                 var primaryKeyPropertyName = SimPrimaryKeyMap.GetPrimaryKeyPropertyName(entity.GetType());
@@ -19,7 +25,6 @@ namespace SimInstanceLab.Managers
                 primaryKeyProperty.SetValue(entity, RandomSeedHelper.GetNextAutoIncrementalNumber());
 
             }
-            _container.Add(type, entities);
         }
 
         public List<object> GetAll(Type type)

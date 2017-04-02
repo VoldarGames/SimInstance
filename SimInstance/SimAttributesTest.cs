@@ -23,5 +23,19 @@ namespace SimInstance
                 );
             Assert.AreEqual(10000,instances.Count);
         }
+
+        [TestMethod]
+        public void DatabaseInFileTest()
+        {
+            var instances = new FileModelStage()
+                .Execute<ModelIntClass>(
+                    new Dictionary<Type, int>()
+                    {
+                        {typeof(ModelIntClass), 100},
+                        {typeof(ModelStringClass), 100},
+                    }
+                );
+            Assert.AreEqual(100, instances.Count);
+        }
     }
 }
